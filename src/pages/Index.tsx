@@ -7,23 +7,34 @@ const mockAnalyzeCode = async (code: string): Promise<Issue[]> => {
   await new Promise(resolve => setTimeout(resolve, 1500));
   
   const issues: Issue[] = [];
+  const lines = code.split('\n');
   
   // Simple demo analysis
-  if (code.includes('console.log')) {
+  const consoleLogLine = lines.findIndex(line => line.includes('console.log'));
+  if (consoleLogLine !== -1) {
     issues.push({
       type: 'warning',
       message: 'Console statements should be removed in production code',
-      line: code.split('\n').findIndex(line => line.includes('console.log')) + 1,
+      line: consoleLogLine + 1,
+      code: lines[consoleLogLine].trim(),
       suggestion: 'Consider using a proper logging service instead'
     });
   }
   
   if (!code.includes(';')) {
-    issues.push({
-      type: 'error',
-      message: 'Missing semicolons',
-      suggestion: 'Add semicolons at the end of statements'
-    });
+    const firstLineWithoutSemicolon = lines.findIndex(line => 
+      line.trim().length > 0 && !line.trim().endsWith(';') && 
+      !line.trim().endsWith('{') && !line.trim().endsWith('}')
+    );
+    if (firstLineWithoutSemicolon !== -1) {
+      issues.push({
+        type: 'error',
+        message: 'Missing semicolons',
+        line: firstLineWithoutSemicolon + 1,
+        code: lines[firstLineWithoutSemicolon].trim(),
+        suggestion: 'Add semicolons at the end of statements'
+      });
+    }
   }
   
   return issues;

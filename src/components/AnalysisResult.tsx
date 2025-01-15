@@ -8,6 +8,7 @@ export interface Issue {
   message: string;
   line?: number;
   suggestion?: string;
+  code?: string;
 }
 
 interface AnalysisResultProps {
@@ -44,9 +45,18 @@ export const AnalysisResult: React.FC<AnalysisResultProps> = ({ issues }) => {
                   )}
                 </div>
                 <p className="text-sm mb-2">{issue.message}</p>
+                {issue.code && (
+                  <div className="mt-2 p-2 rounded bg-muted font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">
+                      <code className="text-sm">
+                        {issue.code}
+                      </code>
+                    </pre>
+                  </div>
+                )}
                 {issue.suggestion && (
                   <div className="mt-2 p-2 rounded bg-muted">
-                    <p className="text-sm font-code">{issue.suggestion}</p>
+                    <p className="text-sm font-mono">{issue.suggestion}</p>
                   </div>
                 )}
               </div>

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Copy, Check } from "lucide-react";
@@ -40,6 +39,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ onAnalyze }) => {
     }
   };
 
+  const lines = code.split('\n');
+
   return (
     <Card className="p-4 bg-code-background">
       <div className="flex justify-between items-center mb-4">
@@ -53,12 +54,28 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ onAnalyze }) => {
           {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
         </Button>
       </div>
-      <Textarea
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        className="font-code min-h-[200px] bg-code-background text-code-foreground"
-        placeholder="Enter your code here..."
-      />
+      <div className="relative font-mono text-sm">
+        <div className="flex">
+          <div className="pr-4 text-gray-500 select-none text-right">
+            {lines.map((_, i) => (
+              <div key={i + 1} className="leading-6">
+                {i + 1}
+              </div>
+            ))}
+          </div>
+          <textarea
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            className="flex-1 font-code min-h-[200px] bg-code-background text-code-foreground resize-none leading-6 outline-none"
+            placeholder="Enter your code here..."
+            style={{
+              lineHeight: '1.5rem',
+              padding: 0,
+              border: 'none',
+            }}
+          />
+        </div>
+      </div>
       <div className="mt-4 flex justify-end">
         <Button
           onClick={handleAnalyze}
