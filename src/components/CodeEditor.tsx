@@ -3,13 +3,21 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, Copy, Check } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface CodeEditorProps {
-  onAnalyze: (code: string) => Promise<void>;
+  onAnalyze: (code: string, language: string) => Promise<void>;
 }
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({ onAnalyze }) => {
   const [code, setCode] = useState("");
+  const [language, setLanguage] = useState("javascript");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -20,7 +28,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ onAnalyze }) => {
     }
     setIsAnalyzing(true);
     try {
-      await onAnalyze(code);
+      await onAnalyze(code, language);
     } catch (error) {
       toast.error("Failed to analyze code");
     } finally {
@@ -44,7 +52,21 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ onAnalyze }) => {
   return (
     <Card className="p-4 bg-code-background">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">Code Input</h2>
+        <div className="flex items-center gap-4">
+          <h2 className="text-lg font-semibold">Code Input</h2>
+          <Select value={language} onValueChange={setLanguage}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select language" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="javascript">JavaScript</SelectItem>
+              <SelectItem value="typescript">TypeScript</SelectItem>
+              <SelectItem value="python">Python</SelectItem>
+              <SelectItem value="java">Java</SelectItem>
+              <SelectItem value="cpp">C++</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
         <Button
           variant="ghost"
           size="icon"
